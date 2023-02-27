@@ -42,8 +42,8 @@ const list = [
   'Weight(Gm.)',
   'Rate(10gm.)',
   'Making(%)',
-  'Lobor',
-  'Amount',
+  'Lobor Rs.',
+  'Amount Rs.',
 ];
 let milliseconds = new Date().valueOf();
 let bill_genBill = `RKJ${milliseconds}`;
@@ -57,6 +57,7 @@ const CreateBill = () => {
   const [allList, setAllList] = React.useState([]);
   const [isSelected, setSelection] = useState(false);
   const [billNumber, setbillNumber] = useState('');
+  const [lobor, setlobor] = useState('');
   const [values, setValues] = React.useState({
     ItemName: '',
     Weight: '',
@@ -100,6 +101,15 @@ const CreateBill = () => {
   }, [allList]);
 
   useEffect(() => {
+    if (isSelected) {
+      setValues(values => ({
+        ...values,
+        Lobor: lobor,
+      }));
+    }
+  }, [lobor]);
+
+  useEffect(() => {
     if (amount) {
       setValues(values => ({
         ...values,
@@ -112,7 +122,12 @@ const CreateBill = () => {
     if (isSelected) {
       setValues(values => ({
         ...values,
-        Lobor_per_gm: 'lobor per gram',
+        Lobor_per_gm: '/gm.',
+      }));
+    } else {
+      setValues(values => ({
+        ...values,
+        Lobor_per_gm: '',
       }));
     }
   }, [isSelected]);
@@ -120,12 +135,12 @@ const CreateBill = () => {
   useEffect(() => {
     let value = Number(values.Rate) / 10;
     let rateValue = value * Number(values.Weight);
+    let lobor = isSelected ? Number(values.Lobor) * Number(values.Weight) : Number(values.Lobor);
     let totalValue =
       value * Number(values.Weight) +
-      (Number(rateValue) * Number(values.Making)) / 100 +
-      Number(values.Lobor);
+      (Number(rateValue) * Number(values.Making)) / 100 + lobor
     setAmount(totalValue);
-  }, [values]);
+  }, [values,isSelected]);
 
   const saveFavorites = async () => {
     const myData = await AsyncStorage.getItem('LIST');
@@ -161,7 +176,9 @@ const CreateBill = () => {
         <td style="width: 30%;">${item.ItemName}</td>
         <td style="width: 15%;">${item.Weight}</td>
         <td style="width: 15%;">${item.Rate}</td>
-        <td style="width: 10%;">${item.Lobor}</td>
+        <td style="width: 10%;">${item.Lobor} ${
+        item?.Lobor_per_gm ? item?.Lobor_per_gm : ''
+      }</td>
         <td style="width: 20%;">${item.Amount}</td>
      </tr>`;
     });
@@ -175,8 +192,11 @@ const CreateBill = () => {
                     <span style="text-align: center;text-decoration: underline; text-shadow:2px 2px 5px gary;font-size:1.8vw;font-weight: 900;font-family: 'Times New Roman', Times, serif;">
                         Near Bank of Baroda Jagdishpur Chauraha, 
                         Pipraich, Kaptanganj Road, Kushinagar</br>
-                        Phone no: +918303376242 ,
-                        Email: sv3716358@gmail.com
+                        Phone no: +917607693193 ,+918303376242
+                        Email: ramakantjewellers@gmail.com
+                    </span>
+                   <span style="text-align: center;text-decoration: underline; text-shadow:2px 2px 5px gary;font-size:1.5vw;font-weight: 900;font-family: 'Times New Roman', Times, serif;">
+                    ( ग्राहक का संतुष्टि हमारा पहला उद्देश्य है:)
                     </span>
                 </div>
             </div>
@@ -196,7 +216,8 @@ const CreateBill = () => {
                 <div style="width:50%;display: flex;justify-content:flex-end;align-items: flex-end;">
                     <span style="font-size:1.7vw;font-weight: 900;font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">
                         Invoice No : ${bill_genBill}<br>
-                        Date : ${dd + '/' + mm + '/' + yyyy}
+                        Date : ${dd + '/' + mm + '/' + yyyy}<br>
+
                         </span>
                 </div>
             </div>
@@ -278,6 +299,7 @@ const CreateBill = () => {
           ) {
             setAllList([...allList, values]);
             setValues('');
+            setlobor('');
             setModalItem(!modalItem);
           } else {
             Alert.alert('please fill all box');
@@ -490,7 +512,8 @@ const CreateBill = () => {
                             fontWeight="bold"
                             color="warmGray.400"
                             letterSpacing="lg">
-                            {item.Lobor}
+                            {item.Lobor}{' '}
+                            {item?.Lobor_per_gm ? item?.Lobor_per_gm : null}
                           </Text>
                         </Box>
                         <Box
@@ -644,8 +667,8 @@ const CreateBill = () => {
                         <FormControl.Label>{'Lobor (Rs.)'}</FormControl.Label>
                         <Input
                           keyboardType="numeric"
-                          value={values.Lobor}
-                          onChangeText={value => handleChange('Lobor', value)}
+                          value={lobor}
+                          onChangeText={value => setlobor(value)}
                         />
                       </FormControl>
                       <Box>
