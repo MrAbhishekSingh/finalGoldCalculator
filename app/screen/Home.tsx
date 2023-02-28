@@ -72,7 +72,7 @@ const CreateBill = () => {
     phone: '',
     address: '',
     billdetails: [],
-    pdfFile: '',
+    pdfFile: '/storage/emulated/0/Download/RKJBILL' + `/${bill_genBill}.pdf`,
     bill_number: bill_genBill,
   });
 
@@ -101,7 +101,7 @@ const CreateBill = () => {
   }, [allList]);
 
   useEffect(() => {
-    if (isSelected) {
+    if (lobor) {
       setValues(values => ({
         ...values,
         Lobor: lobor,
@@ -135,12 +135,15 @@ const CreateBill = () => {
   useEffect(() => {
     let value = Number(values.Rate) / 10;
     let rateValue = value * Number(values.Weight);
-    let lobor = isSelected ? Number(values.Lobor) * Number(values.Weight) : Number(values.Lobor);
+    let lobor = isSelected
+      ? Number(values.Lobor) * Number(values.Weight)
+      : Number(values.Lobor);
     let totalValue =
       value * Number(values.Weight) +
-      (Number(rateValue) * Number(values.Making)) / 100 + lobor
+      (Number(rateValue) * Number(values.Making)) / 100 +
+      lobor;
     setAmount(totalValue);
-  }, [values,isSelected]);
+  }, [values, isSelected, lobor]);
 
   const saveFavorites = async () => {
     const myData = await AsyncStorage.getItem('LIST');
@@ -258,7 +261,6 @@ const CreateBill = () => {
     };
 
     let file = await RNHTMLtoPDF.convert(options);
-    const destinationPath = RNFS.DownloadDirectoryPath;
     const destinationFile =
       '/storage/emulated/0/Download/RKJBILL' + `/${bill_genBill}.pdf`;
     RNFS.copyFile(file.filePath, destinationFile).then(res => {
@@ -266,14 +268,7 @@ const CreateBill = () => {
       setFilePath(destinationFile);
       setModalVisible(!modalVisible);
     });
-    setcustomer(customer => ({
-      ...customer,
-      pdfFile: destinationFile,
-    }));
-    setcustomer(customer => ({
-      ...customer,
-      bill_number: bill_genBill,
-    }));
+  
     saveFavorites();
   };
   const submit = () => {
@@ -292,15 +287,19 @@ const CreateBill = () => {
           values.Rate !== undefined &&
           values.Rate !== ''
         ) {
-          if (
-            values.Lobor !== null &&
-            values.Lobor !== undefined &&
-            values.Lobor !== ''
-          ) {
-            setAllList([...allList, values]);
-            setValues('');
-            setlobor('');
-            setModalItem(!modalItem);
+          if (lobor !== null && lobor !== undefined && lobor !== '') {
+            if (
+              values.Making !== null &&
+              values.Making !== undefined &&
+              values.Making !== ''
+            ) {
+              setAllList([...allList, values]);
+              setValues('');
+              setlobor('');
+              setModalItem(!modalItem);
+            } else {
+              Alert.alert('please fill all box');
+            }
           } else {
             Alert.alert('please fill all box');
           }

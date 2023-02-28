@@ -6,6 +6,7 @@ import AllBils from '../screen/AllBils';
 import CreateBill from '../screen/Home';
 import {Avatar, Box, Text} from 'native-base';
 import {Image} from 'react-native-svg';
+import BillDetails from '../screen/BillDetails';
 
 function SplashScreenImage({navigation}) {
   const img = require('../assetes/transLogo.png');
@@ -85,6 +86,7 @@ function Navigations() {
         />
         <Stack.Screen name="All Bills" component={AllBils} />
         <Stack.Screen name="Create Bill" component={CreateBill} />
+        <Stack.Screen name="Bill Details" component={BillDetails} />
       </Stack.Navigator>
     </NavigationContainer>
   );

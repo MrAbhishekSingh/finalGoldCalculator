@@ -47,7 +47,7 @@ const AllBils = ({navigation}) => {
     }
   };
   const onRefresh = useCallback(() => {
-    getdata()
+    getdata();
     setIsRefreshing(true);
     wait(2000).then(() => setIsRefreshing(false));
   }, []);
@@ -63,7 +63,7 @@ const AllBils = ({navigation}) => {
         setFilterdata(filteredData);
       }
     }
-  }, [search,alldata]);
+  }, [search, alldata]);
 
   useEffect(() => {
     getdata();
@@ -102,61 +102,65 @@ const AllBils = ({navigation}) => {
             refreshing={isRefreshing}
             onRefresh={onRefresh}
             renderItem={({item, index}) => (
-              <Box
-                shadow={3}
-                bg="#fff"
-                my="2"
-                borderRadius="10"
-                borderWidth="2"
-                _dark={{
-                  borderColor: 'muted.50',
-                }}
-                borderColor="muted.400"
-                pl={['0', '4']}
-                pr={['0', '5']}
-                py="2">
-                <HStack
-                  alignItems="center"
-                  px="2"
-                  space={[2, 3]}
-                  justifyContent="space-between">
-                  <VStack w="35%">
-                    <Text
-                      _dark={{
-                        color: 'warmGray.50',
-                      }}
-                      color="coolGray.800"
-                      bold>
-                      {item.name}
-                    </Text>
-                    <Text
-                      color="coolGray.600"
-                      _dark={{
-                        color: 'warmGray.200',
-                      }}>
-                      {item.phone}
-                    </Text>
-                  </VStack>
-                  <Spacer />
-                  <VStack w="40%">
-                    <Text
-                      _dark={{
-                        color: 'warmGray.50',
-                      }}
-                      color="coolGray.800"
-                      bold>
-                      {'Bill no.'}
-                    </Text>
-                    <Text
-                      color="coolGray.600"
-                      _dark={{
-                        color: 'warmGray.200',
-                      }}>
-                      {item.bill_number}
-                    </Text>
-                  </VStack>
-                </HStack>
-              </Box>
+              <TouchableOpacity style={{ elevation: 2 }}
+                 onPress={() => navigation.navigate('Bill Details', { state: item })}
+              >
+                <Box
+                  // shadow={3}
+                  bg="#fff"
+                  my="2"
+                  borderRadius="10"
+                  borderWidth="2"
+                  _dark={{
+                    borderColor: 'muted.50',
+                  }}
+                  borderColor="muted.400"
+                  pl={['0', '4']}
+                  pr={['0', '5']}
+                  py="2">
+                  <HStack
+                    alignItems="center"
+                    px="2"
+                    space={[2, 3]}
+                    justifyContent="space-between">
+                    <VStack w="35%">
+                      <Text
+                        _dark={{
+                          color: 'warmGray.50',
+                        }}
+                        color="coolGray.800"
+                        bold>
+                        {item.name}
+                      </Text>
+                      <Text
+                        color="coolGray.600"
+                        _dark={{
+                          color: 'warmGray.200',
+                        }}>
+                        {item.phone}
+                      </Text>
+                    </VStack>
+                    <Spacer />
+                    <VStack w="40%">
+                      <Text
+                        _dark={{
+                          color: 'warmGray.50',
+                        }}
+                        color="coolGray.800"
+                        bold>
+                        {'Bill no.'}
+                      </Text>
+                      <Text
+                        color="coolGray.600"
+                        _dark={{
+                          color: 'warmGray.200',
+                        }}>
+                        {item.bill_number}
+                      </Text>
+                    </VStack>
+                  </HStack>
+                </Box>
+              </TouchableOpacity>
             )}
           />
         ) : (
