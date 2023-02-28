@@ -137,7 +137,7 @@ const CreateBill = () => {
     let rateValue = value * Number(values.Weight);
     let lobor = isSelected
       ? Number(values.Lobor) * Number(values.Weight)
-      : Number(values.Lobor);
+      : Number(values.Lobor) * Number(values.Weight) / 10;
     let totalValue =
       value * Number(values.Weight) +
       (Number(rateValue) * Number(values.Making)) / 100 +
