@@ -74,6 +74,7 @@ const CreateBill = () => {
     billdetails: [],
     pdfFile: '/storage/emulated/0/Download/RKJBILL' + `/${bill_genBill}.pdf`,
     bill_number: bill_genBill,
+    totalAmount: '',
   });
 
   const handleChange = (name: string, value: string) => {
@@ -109,6 +110,23 @@ const CreateBill = () => {
     }
   }, [lobor]);
 
+  const billArr = () => {
+    
+    setcustomer(customer => ({
+      ...customer,
+      billdetails: [...allList],
+    }));
+  };
+  console.log('allList',allList)
+  useEffect(() => {
+    if (totalAmount) {
+      setcustomer(customer => ({
+        ...customer,
+        totalAmount: totalAmount,
+      }));
+    }
+  }, [totalAmount]);
+
   useEffect(() => {
     if (amount) {
       setValues(values => ({
@@ -137,7 +155,7 @@ const CreateBill = () => {
     let rateValue = value * Number(values.Weight);
     let lobor = isSelected
       ? Number(values.Lobor) * Number(values.Weight)
-      : Number(values.Lobor) * Number(values.Weight) / 10;
+      : (Number(values.Lobor) * Number(values.Weight)) / 10;
     let totalValue =
       value * Number(values.Weight) +
       (Number(rateValue) * Number(values.Making)) / 100 +
@@ -164,10 +182,7 @@ const CreateBill = () => {
   };
 
   const createPDF = async () => {
-    setcustomer(customer => ({
-      ...customer,
-      billdetails: allList,
-    }));
+    billArr();
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -268,7 +283,6 @@ const CreateBill = () => {
       setFilePath(destinationFile);
       setModalVisible(!modalVisible);
     });
-  
     saveFavorites();
   };
   const submit = () => {
@@ -339,6 +353,7 @@ const CreateBill = () => {
               w="100%"
             />
             <Input
+              maxLength={10}
               keyboardType="numeric"
               value={customer.phone}
               onChangeText={text => handleChangeName('phone', text)}

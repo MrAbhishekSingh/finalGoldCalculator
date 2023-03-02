@@ -4,6 +4,8 @@ import {
   TouchableOpacity,
   SafeAreaView,
   RefreshControl,
+  Linking,
+  Alert,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
@@ -21,6 +23,7 @@ import {
 } from 'native-base';
 import {G, Path} from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Share from 'react-native-share';
 
 const AllBils = ({navigation}) => {
   const [alldata, setAlldata] = useState();
@@ -68,6 +71,26 @@ const AllBils = ({navigation}) => {
   useEffect(() => {
     getdata();
   }, []);
+
+  const ShareData = async (item) => {
+     console.log('item',item);
+     let filnename = `${item.pdfFile}`
+     let shareOptions = {
+      title: 'Share via WhatsApp',
+      message: '*RAMAKANT JEWELLERS*',
+      type: "application/pdf",
+      urls: [filnename],
+      social: Share.Social.WHATSAPP,
+      whatsAppNumber: '91' + item.phone,
+    };
+
+    Share.shareSingle(shareOptions)
+      .then(resp => {
+        console.log(resp);
+      })
+      .catch(_err => Alert.alert('WhatsApp is not installed on the device.'));
+  };
+  
   return (
     <>
       <SafeAreaView style={{flex: 1, padding: 5, marginBottom: 5}}>
@@ -102,9 +125,11 @@ const AllBils = ({navigation}) => {
             refreshing={isRefreshing}
             onRefresh={onRefresh}
             renderItem={({item, index}) => (
-              <TouchableOpacity style={{ elevation: 2 }}
-                 onPress={() => navigation.navigate('Bill Details', { state: item })}
-              >
+              <TouchableOpacity
+                style={{elevation: 2}}
+                onPress={() =>
+                  navigation.navigate('Bill Details', {state: item})
+                }>
                 <Box
                   // shadow={3}
                   bg="#fff"
@@ -158,6 +183,23 @@ const AllBils = ({navigation}) => {
                         {item.bill_number}
                       </Text>
                     </VStack>
+                    <TouchableOpacity
+                      onPress={()=>ShareData(item)}
+                      style={{backgroundColor: 'transparent'}}
+                      padding="0">
+                      <Icon size="6xl" viewBox="-160 40 800 400">
+                        <G
+                          fillRule="nonzero"
+                          stroke="none"
+                          strokeWidth={1}
+                          fill="none">
+                          <Path
+                            d="M379.56,131.67A172.4,172.4,0,0,0,256.67,80.73C161,80.73,83.05,158.64,83.05,254.42a173.47,173.47,0,0,0,23.2,86.82l-24.65,90,92.08-24.17a173.55,173.55,0,0,0,83,21.17h.07c95.73,0,173.69-77.91,173.69-173.69A172.73,172.73,0,0,0,379.53,131.7l0,0ZM256.72,399a144.17,144.17,0,0,1-73.52-20.14l-5.29-3.15L123.27,390l14.59-53.27-3.42-5.47a143.29,143.29,0,0,1-22.11-76.81C112.33,174.81,177.1,110,256.8,110A144.34,144.34,0,0,1,401.12,254.48c-.07,79.67-64.83,144.46-144.41,144.46v0ZM335.87,290.8c-4.32-2.2-25.68-12.67-29.65-14.12s-6.85-2.19-9.8,2.2-11.22,14.11-13.76,17-5.06,3.29-9.37,1.09-18.35-6.77-34.92-21.56c-12.88-11.5-21.61-25.74-24.15-30s-.29-6.71,1.92-8.83c2-1.93,4.32-5.06,6.51-7.6s2.88-4.32,4.32-7.26.74-5.42-.35-7.6-9.8-23.55-13.34-32.25c-3.49-8.51-7.12-7.32-9.79-7.47s-5.42-.13-8.29-.13a16,16,0,0,0-11.57,5.41c-4,4.32-15.2,14.86-15.2,36.22s15.54,42,17.72,44.91,30.61,46.76,74.14,65.54c10.34,4.44,18.42,7.11,24.72,9.18a60,60,0,0,0,27.32,1.71c8.35-1.23,25.68-10.49,29.31-20.62s3.63-18.83,2.55-20.62-3.91-3-8.29-5.22l0,0Z"
+                            fill="#0db523"
+                          />
+                        </G>
+                      </Icon>
+                    </TouchableOpacity>
                   </HStack>
                 </Box>
               </TouchableOpacity>
