@@ -117,7 +117,6 @@ const CreateBill = () => {
       billdetails: [...allList],
     }));
   };
-  console.log('allList',allList)
   useEffect(() => {
     if (totalAmount) {
       setcustomer(customer => ({
@@ -279,7 +278,6 @@ const CreateBill = () => {
     const destinationFile =
       '/storage/emulated/0/Download/RKJBILL' + `/${bill_genBill}.pdf`;
     RNFS.copyFile(file.filePath, destinationFile).then(res => {
-      console.log(destinationFile);
       setFilePath(destinationFile);
       setModalVisible(!modalVisible);
     });

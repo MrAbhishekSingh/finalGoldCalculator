@@ -25,6 +25,7 @@ import {G, Path} from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Share from 'react-native-share';
 import RNFetchBlob from 'rn-fetch-blob';
+import RNPrint from 'react-native-print';
 
 const AllBils = ({navigation}) => {
   const [alldata, setAlldata] = useState();
@@ -73,13 +74,18 @@ const AllBils = ({navigation}) => {
     getdata();
   }, []);
 
-  const ShareData = async (item: { pdfFile: any; phone: string; }) => {
-    let filePath = `${item.pdfFile}`
-    console.log(item)
+  const printePdf = async (item) => {
+    await RNPrint.print({
+      filePath: `${item.pdfFile}`,
+    });
+  };
+
+  const ShareData = async (item: {pdfFile: any; phone: string}) => {
+    let filePath = `${item.pdfFile}`;
     RNFetchBlob.fs
       .readFile(filePath, 'base64')
       .then(data => {
-        let img = "data:application/pdf;base64," + data
+        let img = 'data:application/pdf;base64,' + data;
         let shareOptions = {
           title: 'Share via WhatsApp',
           message: '*RAMAKANT JEWELLERS*',
@@ -98,8 +104,7 @@ const AllBils = ({navigation}) => {
       })
       .catch(err => console.log(err));
   };
-  console.log('filterdata',filterdata);
-  
+
   return (
     <>
       <SafeAreaView style={{flex: 1, padding: 5, marginBottom: 5}}>
@@ -175,7 +180,10 @@ const AllBils = ({navigation}) => {
                       </Text>
                     </VStack>
                     <Spacer />
-                    <VStack w="40%">
+                    <VStack
+                      flexDirection="column"
+                      alignItems="flex-end"
+                      w="40%">
                       <Text
                         _dark={{
                           color: 'warmGray.50',
@@ -192,11 +200,17 @@ const AllBils = ({navigation}) => {
                         {item.bill_number}
                       </Text>
                     </VStack>
+                  </HStack>
+                  <Box
+                    px="2"
+                    display="flex"
+                    flexDirection="row"
+                    justifyContent="space-between">
                     <TouchableOpacity
-                      onPress={()=>ShareData(item)}
-                      style={{backgroundColor: 'transparent'}}
+                      onPress={() => ShareData(item)}
+                      style={{backgroundColor: 'transparent', width: '40%'}}
                       padding="0">
-                      <Icon size="6xl" viewBox="-160 40 800 400">
+                      <Icon size="6xl" viewBox="-60 40 600 400">
                         <G
                           fillRule="nonzero"
                           stroke="none"
@@ -208,8 +222,53 @@ const AllBils = ({navigation}) => {
                           />
                         </G>
                       </Icon>
+                      <Text
+                        shadow={3}
+                        fontSize="md"
+                        fontWeight="bold"
+                        color="blueGray.900"
+                        letterSpacing="lg">
+                        Share Whats App
+                      </Text>
                     </TouchableOpacity>
-                  </HStack>
+                    <TouchableOpacity
+                      onPress={() => printePdf(item)}
+                      style={{
+                        backgroundColor: 'transparent',
+                        width: '40%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-end',
+                        justifyContent: 'flex-end',
+                      }}
+                      padding="0">
+                      <Icon size="6xl" viewBox="-100 -80 800 600">
+                        <G
+                          fillRule="nonzero"
+                          stroke="none"
+                          strokeWidth={1}
+                          fill="none">
+                          <Path
+                            d="M420.931,104.275h-44.166V0H113.236v104.275H69.069C30.982,104.275,0,136.499,0,176.104v123.732
+		                          c0,39.615,30.982,71.839,69.069,71.839h33.506V490h284.839V371.675h33.516c38.089,0,69.069-32.224,69.069-71.839V176.104
+		                          C490,136.499,459.02,104.275,420.931,104.275z M134.087,20.852h221.827v83.424H134.087V20.852z M366.564,469.149H123.427V290.204
+		                          h243.137V469.149z M469.149,299.836c0,28.109-21.635,50.987-48.218,50.987h-33.516v-81.47H102.576v81.47H69.069
+		                          c-26.583,0-48.218-22.878-48.218-50.987V176.104c0-28.11,21.635-50.978,48.218-50.978h351.862
+		                          c26.583,0,48.218,22.867,48.218,50.978V299.836z"
+                            fill="#111511"
+                          />
+                        </G>
+                      </Icon>
+                      <Text
+                        shadow={3}
+                        fontSize="md"
+                        fontWeight="bold"
+                        color="blueGray.900"
+                        letterSpacing="lg">
+                        Print Bill
+                      </Text>
+                    </TouchableOpacity>
+                  </Box>
                 </Box>
               </TouchableOpacity>
             )}
