@@ -24,6 +24,7 @@ import {
 import {G, Path} from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Share from 'react-native-share';
+import RNFetchBlob from 'rn-fetch-blob';
 
 const AllBils = ({navigation}) => {
   const [alldata, setAlldata] = useState();
@@ -72,24 +73,32 @@ const AllBils = ({navigation}) => {
     getdata();
   }, []);
 
-  const ShareData = async (item) => {
-     console.log('item',item);
-     let filnename = `${item.pdfFile}`
-     let shareOptions = {
-      title: 'Share via WhatsApp',
-      message: '*RAMAKANT JEWELLERS*',
-      type: "application/pdf",
-      urls: [filnename],
-      social: Share.Social.WHATSAPP,
-      whatsAppNumber: '91' + item.phone,
-    };
-
-    Share.shareSingle(shareOptions)
-      .then(resp => {
-        console.log(resp);
+  const ShareData = async (item: { pdfFile: any; phone: string; }) => {
+    let filePath = `${item.pdfFile}`
+    console.log(item)
+    RNFetchBlob.fs
+      .readFile(filePath, 'base64')
+      .then(data => {
+        let img = "data:application/pdf;base64," + data
+        let shareOptions = {
+          title: 'Share via WhatsApp',
+          message: '*RAMAKANT JEWELLERS*',
+          type: 'image/jpeg',
+          urls: [img],
+          social: Share.Social.WHATSAPP,
+          whatsAppNumber: '91' + item.phone,
+        };
+        Share.shareSingle(shareOptions)
+          .then(resp => {
+            console.log(resp);
+          })
+          .catch(_err =>
+            Alert.alert('WhatsApp is not installed on the device.'),
+          );
       })
-      .catch(_err => Alert.alert('WhatsApp is not installed on the device.'));
+      .catch(err => console.log(err));
   };
+  console.log('filterdata',filterdata);
   
   return (
     <>
